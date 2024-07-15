@@ -13,7 +13,7 @@ async def post_order(request: Request):
         order = Order(db, **data)
         order.validate()
         await order.create()
-        return web.json_response(data=order.to_dict())
+        return web.json_response(data=order.to_dict(), status=201)
     except OrderAPIException as e:
         raise web.HTTPBadRequest(text=e.message)
 
