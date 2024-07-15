@@ -18,5 +18,15 @@ async def get_order(request: Request):
     order_id = int(request.match_info['id'])
     db = request.app[DB_KEY]
     order = Order(db, order_id=order_id)
-    await order.get()
+    await order.read()
+    return web.json_response(data=order.to_dict())
+
+
+async def patch_order(request: Request):
+    order_id = int(request.match_info['id'])
+    data = await request.json()
+    db = request.app[DB_KEY]
+    order = Order(db, order_id=order_id, **data)
+    order.validate_before_update()
+    await order.update()
     return web.json_response(data=order.to_dict())
