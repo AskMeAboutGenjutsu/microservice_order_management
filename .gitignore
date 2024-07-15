@@ -1,2 +1,4 @@
 /.idea
 /venv
+/orders_data.db
+/test.py
