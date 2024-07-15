@@ -40,3 +40,23 @@ class Order:
             return self.order_id
         except Exception as e:
             raise OrderAPIException(f'Не удалось сохранить данные в БД:\n{e}')
+
+    async def get(self):
+        cursor = await self.db.execute("""
+        select orders.user_id, orders.status, order_product_relationship.product_id from orders
+        join order_product_relationship on orders.order_id = order_product_relationship.order_id
+        where orders.order_id = ?""", (self.order_id, ))
+        data = await cursor.fetchall()
+        self.user_id = data[0][0]
+        self.status = data[0][1]
+        self.product_ids = [data[i][2] for i in range(len(data))]
+        await cursor.close()
+        return
+
+    def to_dict(self):
+        return {
+            'order_id': self.order_id,
+            'user_id': self.user_id,
+            'status': self.status,
+            'product_ids': self.product_ids
+        }
