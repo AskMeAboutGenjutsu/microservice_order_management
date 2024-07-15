@@ -21,6 +21,15 @@ class Order:
         if not all([isinstance(product_id, int) for product_id in self.product_ids]):
             raise OrderAPIException(f'Поле "product_ids" должно быть списком с элементами типа int')
 
+    def validate_before_update(self):
+        if self.status is None:
+            raise OrderAPIException(f'Поле "status" не должно быть пустым')
+        if not isinstance(self.status, str):
+            raise OrderAPIException(f'Поле "status" должно иметь тип int')
+        statuses = ('accepted', 'delivery', 'finalised')
+        if self.status not in statuses:
+            raise OrderAPIException(f'Поле "status" должно быть одним из следующих значений:\n{statuses}')
+
     async def create(self):
         try:
             cursor = await self.db.execute(
@@ -62,9 +71,10 @@ class Order:
         return self.order_id
 
     def to_dict(self):
-        return {
+        data = {
             'order_id': self.order_id,
             'user_id': self.user_id,
             'status': self.status,
             'product_ids': self.product_ids
         }
+        return {k: v for k, v in data.items() if v is not None}
