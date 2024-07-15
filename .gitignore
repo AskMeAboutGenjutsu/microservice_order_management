@@ -1,6 +1,5 @@
 /.idea
 /venv
 /orders_data.db
-/test.py
 __pycache__/
 *.py[cod]
