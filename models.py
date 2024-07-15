@@ -1,6 +1,7 @@
 from order_api_exception import OrderAPIException
 
 
+# класс - интерфейс работы с бд sqlite
 class Order:
     def __init__(self, db, order_id=None, user_id=None, status=None, product_ids=None):
         self.db = db
@@ -9,6 +10,7 @@ class Order:
         self.status = status
         self.product_ids = product_ids
 
+    # проверка данных на корректность
     def validate(self):
         if self.user_id is None:
             raise OrderAPIException(f'Поле "user_id" не должно быть пустым')
@@ -21,6 +23,7 @@ class Order:
         if not all([isinstance(product_id, int) for product_id in self.product_ids]):
             raise OrderAPIException(f'Поле "product_ids" должно быть списком с элементами типа int')
 
+    # проверка данных на корректность перед обновлением статуса заказа
     def validate_before_update(self):
         if self.status is None:
             raise OrderAPIException(f'Поле "status" не должно быть пустым')
@@ -30,8 +33,10 @@ class Order:
         if self.status not in statuses:
             raise OrderAPIException(f'Поле "status" должно быть одним из следующих значений:\n{statuses}')
 
+    # создание записи в БД
     async def create(self):
         try:
+            # запись данных в таблицу заказов
             cursor = await self.db.execute(
                 'insert into orders (user_id) values (?);',
                 (self.user_id, )
@@ -40,6 +45,7 @@ class Order:
             self.order_id = cursor.lastrowid
             await cursor.close()
             order_ids = [self.order_id] * len(self.product_ids)
+            # запись данных в таблицу отношений заказов и продуктов
             cursor = await self.db.executemany(
                 'insert into order_product_relationship (order_id, product_id) '
                 'values (?, ?);', zip(order_ids, self.product_ids)
@@ -50,8 +56,10 @@ class Order:
         except Exception as e:
             raise OrderAPIException(f'Не удалось сохранить данные в БД:\n{e}')
 
+    # выдача данных о заказе из БД
     async def read(self):
         try:
+            # запрос данных из таблицы заказов, а также данных о продуктов в заказе
             cursor = await self.db.execute("""
             select orders.user_id, orders.status, order_product_relationship.product_id from orders
             join order_product_relationship on orders.order_id = order_product_relationship.order_id
@@ -65,6 +73,7 @@ class Order:
         except Exception as e:
             raise OrderAPIException(f'Не удалось найти данные в БД:\n{e}')
 
+    # обновление статуса заказа в БД
     async def update(self):
         try:
             cursor = await self.db.execute(
@@ -76,6 +85,7 @@ class Order:
         except Exception as e:
             raise OrderAPIException(f'Не удалось обновить данные в БД:\n{e}')
 
+    # формирование словаря из данных о заказе
     def to_dict(self):
         data = {
             'order_id': self.order_id,
