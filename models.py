@@ -53,6 +53,14 @@ class Order:
         await cursor.close()
         return self.order_id
 
+    async def update(self):
+        cursor = await self.db.execute(
+            'update orders set status = ? where order_id = ?;', (self.status, self.order_id)
+        )
+        await self.db.commit()
+        await cursor.close()
+        return self.order_id
+
     def to_dict(self):
         return {
             'order_id': self.order_id,
