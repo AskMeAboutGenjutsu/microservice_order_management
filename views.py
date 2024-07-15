@@ -10,5 +10,13 @@ async def post_order(request: Request):
     db = request.app[DB_KEY]
     order = Order(db, **data)
     order.validate()
-    order_id = await order.create()
-    return web.json_response(data={'order_id': order_id})
+    await order.create()
+    return web.json_response(data=order.to_dict())
+
+
+async def get_order(request: Request):
+    order_id = int(request.match_info['id'])
+    db = request.app[DB_KEY]
+    order = Order(db, order_id=order_id)
+    await order.get()
+    return web.json_response(data=order.to_dict())
