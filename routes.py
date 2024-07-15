@@ -1,2 +1,5 @@
+from views import post_order
+
+
 def setup_routes(app):
-    pass
+    app.router.add_post('/api/v1/order', post_order)
