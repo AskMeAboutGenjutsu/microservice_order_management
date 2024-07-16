@@ -3,7 +3,12 @@ import json
 import pytest
 import requests
 
+"""
+Простые тесты для мониторинга работоспособности микросервиса 
+"""
 
+
+# класс-обертка вокруг requests
 class API:
     def __init__(self, base_url):
         self.base_url = base_url
@@ -21,15 +26,17 @@ class API:
     def patch(self, endpoint, data, *args, **kwargs):
         data = json.dumps(data)
         return requests.patch(f'{self.base_url}/{endpoint}',
-                             data=data, headers=self.headers,
-                             *args, **kwargs)
+                              data=data, headers=self.headers,
+                              *args, **kwargs)
 
 
-@pytest.fixture
+# фикстура, дающая тестам экземпляр класса API
+@pytest.fixture(scope="session")
 def api():
     return API('http://localhost:8080')
 
 
+# тест проверки post запроса api/v1/order эндпоинта
 def test_post(api):
     data = {
         "user_id": 102,
@@ -42,6 +49,7 @@ def test_post(api):
     assert data == resp_data
 
 
+# тест проверки get запроса api/v1/order/{id} эндпоинта
 def test_get(api):
     data = {
         "order_id": 10,
@@ -56,6 +64,7 @@ def test_get(api):
     assert data == resp.json()
 
 
+# тест проверки patch запроса api/v1/order/{id} эндпоинта
 def test_patch(api):
     order_id = 10
     data = {"status": "delivery"}
