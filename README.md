@@ -5,12 +5,25 @@
 Контроллеры обрабатывающие endpointы находятся в **views.py**.\
 URL адреса endpointов находятся в **routes.py**.\
 Реализовано 3 API Endpointa:
-* post_order - создает заказ по POST запросу, URL - '/api/v1/order';
-* get_order - выдает заказ по GET запросу, URL - '/api/v1/order/{id}';
-* patch_order - меняет статус заказа по PATCH запросу, URL - '/api/v1/order/{id}'.
-
+* post_order - создает заказ по POST запросу, URL - '/api/v1/order';\
+Пример запроса:
+```shell
+curl -X POST http://localhost:8080/api/v1/order -d
+'{"user_id": 1, "product_ids": [1, 2, 3, 4]}'
+```
+* get_order - выдает заказ по GET запросу, URL - '/api/v1/order/{id}';\
+Пример запроса:
+```shell
+curl -X GET http://localhost:8080/api/v1/order/1
+```
+* patch_order - меняет статус заказа по PATCH запросу, URL - '/api/v1/order/{id}'.\
+Пример запроса:
+```shell
+curl -X PATCH http://localhost:8080/api/v1/order/1 -d 
+'{"status": "shipped"}'
+```
 Чтобы запустить микросервис:
-```commandline
+```shell
 python3 manage.py
 ```
 ## Database
@@ -23,6 +36,6 @@ python3 manage.py
 Они помогали понять не сломался ли функционал в процессе разработки.\
 Реализованы с помощью *pytest*.\
 Чтобы запустить тесты:
-```commandline
+```shell
 pytest test.py
 ```
