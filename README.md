@@ -5,9 +5,9 @@
 Контроллеры обрабатывающие endpointы находятся в **views.py**.\
 URL адреса endpointов находятся в **routes.py**.\
 Реализовано 3 API Endpointa:
-* post_order - создает заказ по POST запросу, URL - '/api/v1/order';\
+* post_order - создает заказ по POST запросу, URL - '/api/v1/order';
 * get_order - выдает заказ по GET запросу, URL - '/api/v1/order/{id}';
-* patch_order - меняет статус заказа по PATCH запросу, URL - '/api/v1/order/{id}'.\
+* patch_order - меняет статус заказа по PATCH запросу, URL - '/api/v1/order/{id}'.
 
 Чтобы запустить микросервис:
 ```commandline
