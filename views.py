@@ -6,6 +6,7 @@ from models import Order
 from order_api_exception import OrderAPIException
 
 
+# контроллер, обработка POST запроса
 async def post_order(request: Request):
     try:
         data = await request.json()
@@ -18,6 +19,7 @@ async def post_order(request: Request):
         raise web.HTTPBadRequest(text=e.message)
 
 
+# контроллер, обработка GET запроса
 async def get_order(request: Request):
     try:
         order_id = int(request.match_info['id'])
@@ -31,6 +33,7 @@ async def get_order(request: Request):
         raise web.HTTPBadRequest(text=e.args[0])
 
 
+# контроллер, обработка PATCH запроса
 async def patch_order(request: Request):
     try:
         order_id = int(request.match_info['id'])
